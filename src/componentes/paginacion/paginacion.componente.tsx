@@ -1,7 +1,8 @@
-import { useAppDispatch } from '../../hooks/hook';
+import { useAppDispatch, useAppSelector } from '../../hooks/hook';
 import { incrementPage, decrementPage } from '../../redux/dataSlice';
 import './paginacion.css';
 import {useState} from 'react';
+
 
 /**
  * Componente que contiene los botones para paginar
@@ -15,7 +16,7 @@ const Paginacion = () => {
 
     const [page, setPage] = useState(1);
     const dispatch = useAppDispatch();
-    //const page = useAppSelector(state => state.images.page)
+    //const data = useAppSelector(state => state.images)
 
     const handleClickIncrement = () => {
         setPage(page + 1)
