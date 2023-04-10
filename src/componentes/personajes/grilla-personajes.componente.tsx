@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './grilla-personajes.css';
 import TarjetaPersonaje from './tarjeta-personaje.componente';
 import { useAppDispatch, useAppSelector } from '../../hooks/hook';
 import { getData } from '../../redux/dataSlice';
+import { useLocation } from 'react-router-dom';
 
 /**
  * Grilla de personajes para la pagina de inicio
@@ -13,7 +14,34 @@ import { getData } from '../../redux/dataSlice';
  * @returns un JSX element 
  */
 
+    interface CharactersProps {
+            isFav: boolean;
+            id: number;
+            name: string;
+            status: string;
+            species: string;
+            type: string;
+            gender: string;
+            origin: {
+                name: string;
+                url: string;
+            };
+            location: {
+                name: string;
+                url: string;
+            };
+            image: string;
+            episode: string[];
+            url: string;
+            created: string;
+        }
+
 const GrillaPersonajes = () => {
+
+    const location = useLocation();
+    const isHome = location.pathname === '/';
+    const isFavoritos = location.pathname === '/favoritos';
+    const [dataStorage, setDataStorage] = useState([]);
 
         //const [page, setPage] = useState(1)
     
@@ -23,26 +51,63 @@ const GrillaPersonajes = () => {
         //     page: images.GetDataArgs.page,
         //     name: images.GetDataArgs.name
         // })
-    
+        const apiCharacters = images.images;
+        const charactersStorage = JSON.parse(localStorage.getItem("characters") || "[]");
+
         useEffect(
             () => {
             dispatch(getData({
                 page: images.GetDataArgs.page,
-                name: images.GetDataArgs.name
+                name: images.GetDataArgs.name,
+                id: images.GetDataArgs.id
             }))
             },
             [dispatch, images.GetDataArgs]
         )
+
+        const charactersWithIsFav = useMemo(() => {
+
+            if(apiCharacters !== undefined) {
+                const newCharacters = apiCharacters.map((character) => ({
+                ...character,
+                isFav: false,
+                }));
+                
+                for (const localCharacter of charactersStorage) {
+                    const foundCharacter = newCharacters.find((character) => character.id === localCharacter.id);
+                    if (foundCharacter) {
+                        foundCharacter.isFav = localCharacter.isFav;
+                    }
+                }
+                return newCharacters;
+            }
+            else return [];
+            
+            
+        }, [apiCharacters, charactersStorage]);
+
         
-        console.log("esto es lo que obtiene",images.images);
-        console.log("hasta aca");
+        
+
+        // useEffect(()=>{
+        //     setDataStorage(JSON.parse(localStorage.getItem("characters") || "[]"))
+        // },[charactersWithIsFav])
+
+        console.log("Estamos en Home",isHome);
+        
+        //console.log("esto es lo que obtiene",images.images);
+        //console.log("hasta aca");
         
 
     return <div className="grilla-personajes">
         {   
-
-            images.images?.map((image) => 
-            <TarjetaPersonaje key={image.id} imagen={image.image} name={image.name}/>)
+            isHome
+            ?
+            charactersWithIsFav?.map((character) => 
+            <TarjetaPersonaje key={character.id} id={character.id} imagen={character.image} name={character.name} isFav={character.isFav}/>)
+            :
+            charactersStorage.map((character: CharactersProps) => 
+            <TarjetaPersonaje key={character.id} id={character.id} imagen={character.image} name={character.name} isFav={character.isFav}/>)
         }
     </div>
 }

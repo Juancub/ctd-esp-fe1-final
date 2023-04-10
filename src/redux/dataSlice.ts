@@ -31,11 +31,20 @@ interface CharacterApiResponse {
 
 interface initialType {
     images:CharacterApiResponse[];
+    character:CharacterApiResponse;
     loading: boolean;
     texto: string;
+    idApi: number;
+    characterStorage: [{
+        id: number;
+        name: string;
+        image: string;
+        isFav: boolean;
+    }]
     GetDataArgs: {
         page: number;
         name: string;
+        id: number;
     }
 }
 
@@ -43,29 +52,62 @@ interface GetDataArgs {
     claves: {
     page: number;
     name: string;
+    id: number;
     }
 }
 
-
 export const getData = createAsyncThunk(
     'data/images',
-    async ({page, name}:GetDataArgs["claves"]) => {
+    async ({page, name, id}:GetDataArgs["claves"]) => {
     //async (page : number) => {
         //const response = await fetch(`https://rickandmortyapi.com/api/character?page=${page}`)
-        const response = await fetch(`https://rickandmortyapi.com/api/character/?page=${page}&name=${name}`)
-        const parseResponse = await response.json();
+        const response1 = await fetch(`https://rickandmortyapi.com/api/character/?page=${page}&name=${name}`);
+        const response2 = await fetch(`https://rickandmortyapi.com/api/character/${id}`);
+        const parseResponse1 = await response1.json();
+        const parseResponse2 = await response2.json();
         //console.log("este es la respuesta",parseResponse);
-        return parseResponse
+        return {
+            data1: parseResponse1,
+            data2: parseResponse2,
+        }
     }
 )
 
 const initialState: initialType = {
     images : [],
+    character: {
+        id: 0,
+        name: "",
+        status: "",
+        species: "",
+        type: "",
+        gender: "",
+        origin: {
+            name: "",
+            url: "",
+        },
+        location: {
+            name: "",
+            url: "",
+        },
+        image: "",
+        episode: [],
+        url: "",
+        created: "",
+    },
     loading: false,
     texto: "",
+    idApi: 0,
+    characterStorage: [{
+        id: 0,
+        name: "",
+        image: "",
+        isFav: false
+    }],
     GetDataArgs: {
         page: 1,
-        name: ''
+        name: '',
+        id: 1,
     }
 }
 
@@ -121,6 +163,12 @@ const dataSlice = createSlice({
                 texto: ""
             };
         },
+        changeId(state, action) {
+            return {
+               ...state,
+               idApi: action.payload
+            };
+        },
     },
     extraReducers:
     (builder) => {
@@ -128,11 +176,12 @@ const dataSlice = createSlice({
             state.loading = true
         })
         builder.addCase(getData.fulfilled, (state, action) => {
-            state.images = action.payload.results
+            state.images = action.payload.data1.results
+            state.character = action.payload.data2
             state.loading = false
         })
     }
 })
 
-export const {incrementPage, decrementPage, changeName, resetPage, changeText, resetText} = dataSlice.actions
+export const {incrementPage, decrementPage, changeName, resetPage, changeText, resetText, changeId} = dataSlice.actions
 export default dataSlice.reducer

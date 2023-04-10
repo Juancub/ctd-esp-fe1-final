@@ -8,17 +8,26 @@ import './boton-favorito.css';
  * @returns un JSX element 
  */
 
+    interface Character {
+        id: number;
+        name: string;
+        image: string;
+        isFav: boolean;
+    }
+
     interface BotonFavoritoProps {
 
         esFavorito: boolean;
         onClick?: () => void;
+        character?: Character;
     }
 
-const BotonFavorito = ({esFavorito, onClick}:BotonFavoritoProps) => {
+const BotonFavorito = ({esFavorito, onClick, character}:BotonFavoritoProps) => {
+    
     const src = esFavorito ? "/imagenes/star-filled.png" : "/imagenes/star.png"
 
     return <div className="boton-favorito">
-        <img src={src} alt={"favorito"} />
+        <img onClick={onClick} src={src} alt={"favorito"} />
     </div>
 }
 
