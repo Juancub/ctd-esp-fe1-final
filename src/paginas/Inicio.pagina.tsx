@@ -26,19 +26,6 @@ const PaginaInicio = () => {
         dispatch(resetPage())
     }
 
-//     const [page, setPage] = useState()
-
-//     const dispatch = useAppDispatch()
-//     const images = useAppSelector(state => state)
-
-//     useEffect(
-//         () => {
-//         dispatch(getData(1))
-//         },
-//         [dispatch]
-//     )
-
-
     return <div className="container">
         <div className="actions">
             <h3>Catálogo de Personajes</h3>

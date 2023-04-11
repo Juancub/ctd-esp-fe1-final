@@ -1,11 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/hook';
 import { changeName, changeText, resetPage } from '../../redux/dataSlice';
-
-import { getData } from '../../redux/dataSlice';
 import './filtros.css';
 
-//const Filtros: React.FC = () => {
+/**
+
+    Componente de filtros para la búsqueda de personajes.
+    @returns un JSX element
+    */
+
 const Filtros = () => {
 
     const [text, setText] = useState("");
@@ -13,12 +16,13 @@ const Filtros = () => {
     const dispatch = useAppDispatch()
 
     const texto = useAppSelector((state) => state.images.texto)
-    //const [texto, setTexto] = useState("");
-        // const claves = getData({
-        //     page: images.GetDataArgs.page,
-        //     name: images.GetDataArgs.name
-        // })
-    
+
+    /**
+ * Manejador de cambio para la entrada de texto del filtro. Actualiza el estado local y 
+ * despacha las acciones para actualizar el store.
+ * 
+ * @param {React.ChangeEvent<HTMLInputElement>} e - Evento del input
+ */
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         console.log(text);

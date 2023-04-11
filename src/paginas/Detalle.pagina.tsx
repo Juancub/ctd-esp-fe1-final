@@ -135,13 +135,6 @@ const PaginaDetalle = () => {
             };
 
             const index = charactersStorage.findIndex((obj: CharacterStorage) => obj.id === apiCharacter.id);
-            
-            // for (const localCharacter of charactersStorage) {
-            //     const foundCharacter = newCharacters.find((character) => character.id === localCharacter.id);
-            //     if (foundCharacter) {
-            //         foundCharacter.isFav = localCharacter.isFav;
-            //     }
-            // }
 
             if (index !== -1) {
                 newCharacters.isFav = charactersStorage[index].isFav;
@@ -153,11 +146,6 @@ const PaginaDetalle = () => {
         
         
     }, [apiCharacter, charactersStorage]);
-
-    //console.log("localStorage ",charactersStorage);
-    //console.log("personaje de la api ",apiCharacter);
-
-    
     
 
     return <div className="container">

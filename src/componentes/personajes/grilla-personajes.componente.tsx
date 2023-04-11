@@ -41,33 +41,16 @@ const GrillaPersonajes = () => {
     const location = useLocation();
     const isHome = location.pathname === '/';
 
-        //const [page, setPage] = useState(1)
-    
         const dispatch = useAppDispatch()
         const images = useAppSelector(state => state.images)
-        //const personajes = useAppSelector(state => state.images.personajes)
-        // const claves = getData({
-        //     page: images.GetDataArgs.page,
-        //     name: images.GetDataArgs.name
-        // })
         const apiCharacters = images.images;
         const charactersStorage = JSON.parse(localStorage.getItem("characters") || "[]");
-
-
-        //console.log("personajes ",personajes);
         
         const charactersWithFav = apiCharacters.map((character) => {
             return { ...character, isFav: false };
           });
         
           console.log("personajes con la prop isFav",charactersWithFav);
-          
-        //dispatch(upDatePersonajes(charactersWithFav))
-
-        // const personajes = useAppSelector(state => state.images.personajes)
-
-        //   console.log("personajes con la prop isFav",personajes);
-          
 
         useEffect(
             () => {
@@ -79,8 +62,6 @@ const GrillaPersonajes = () => {
             },
             [dispatch, images.GetDataArgs]
         )
-
-        
 
         const charactersWithIsFav = useMemo(() => {
 
@@ -103,18 +84,7 @@ const GrillaPersonajes = () => {
             
         }, [apiCharacters, charactersStorage]);
 
-        
-        
-
-        // useEffect(()=>{
-        //     setDataStorage(JSON.parse(localStorage.getItem("characters") || "[]"))
-        // },[charactersWithIsFav])
-
         console.log("Estamos en Home",isHome);
-        
-        //console.log("esto es lo que obtiene",images.images);
-        //console.log("hasta aca");
-        
 
     return <div className="grilla-personajes">
         {   

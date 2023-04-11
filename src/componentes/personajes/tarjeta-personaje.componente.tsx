@@ -6,13 +6,16 @@ import { useAppDispatch } from '../../hooks/hook';
 import { useState } from 'react';
 
 /**
- * Tarjeta para cada personaje dentro de la grilla de personajes. 
- * 
- * Deberás agregar las propiedades necesarias para mostrar los datos de los personajes
- * 
- * 
- * @returns un JSX element 
- */
+
+    Componente que muestra una tarjeta de un personaje en la grilla de personajes.
+    @component
+    @param {Object} props - Propiedades para configurar el componente.
+    @param {string} props.imagen - URL de la imagen del personaje.
+    @param {string} props.name - Nombre del personaje.
+    @param {number} props.id - Identificador único del personaje.
+    @param {boolean} props.isFav - Indica si el personaje ha sido marcado como favorito.
+    @returns {JSX.Element} - Retorna un elemento JSX que contiene la tarjeta del personaje.
+    */
 
     interface TarjetaPersonajeProps {
         imagen: string;
@@ -31,8 +34,27 @@ import { useState } from 'react';
 
 const TarjetaPersonaje = ({imagen, name, id, isFav}:TarjetaPersonajeProps) => {
 
+
+    /**
+
+    Permite navegar a la vista de detalle del personaje.
+    @type {function}
+    */
     const navigate = useNavigate();
+
+    /**
+
+    Disparador de acciones de Redux.
+    @type {function}
+    */
+
     const dispatch = useAppDispatch()
+
+    /**
+    Indica si el personaje actual ha sido marcado como favorito.
+    @type {boolean}
+    */
+
     const [isFavorite, setIsFavorite] = useState(isFav)
 
     const handleClickImg = () => {
