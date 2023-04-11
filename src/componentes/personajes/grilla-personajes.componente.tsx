@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import './grilla-personajes.css';
 import TarjetaPersonaje from './tarjeta-personaje.componente';
 import { useAppDispatch, useAppSelector } from '../../hooks/hook';
@@ -40,19 +40,34 @@ const GrillaPersonajes = () => {
 
     const location = useLocation();
     const isHome = location.pathname === '/';
-    const isFavoritos = location.pathname === '/favoritos';
-    const [dataStorage, setDataStorage] = useState([]);
 
         //const [page, setPage] = useState(1)
     
         const dispatch = useAppDispatch()
         const images = useAppSelector(state => state.images)
+        //const personajes = useAppSelector(state => state.images.personajes)
         // const claves = getData({
         //     page: images.GetDataArgs.page,
         //     name: images.GetDataArgs.name
         // })
         const apiCharacters = images.images;
         const charactersStorage = JSON.parse(localStorage.getItem("characters") || "[]");
+
+
+        //console.log("personajes ",personajes);
+        
+        const charactersWithFav = apiCharacters.map((character) => {
+            return { ...character, isFav: false };
+          });
+        
+          console.log("personajes con la prop isFav",charactersWithFav);
+          
+        //dispatch(upDatePersonajes(charactersWithFav))
+
+        // const personajes = useAppSelector(state => state.images.personajes)
+
+        //   console.log("personajes con la prop isFav",personajes);
+          
 
         useEffect(
             () => {
@@ -64,6 +79,8 @@ const GrillaPersonajes = () => {
             },
             [dispatch, images.GetDataArgs]
         )
+
+        
 
         const charactersWithIsFav = useMemo(() => {
 

@@ -2,8 +2,8 @@ import "./Detalle.css";
 import BotonFavorito from "../componentes/botones/boton-favorito.componente";
 import TarjetaEpisodio from "../componentes/episodios/tarjeta-episodio.componente";
 import { useAppDispatch, useAppSelector } from "../hooks/hook";
-import { useEffect, useMemo } from "react";
-import { getData } from "../redux/dataSlice";
+import { useEffect, useMemo, useState } from "react";
+import { getData, toggleFavorite } from "../redux/dataSlice";
 
 /**
  * Esta es la pagina de detalle. Aqui se puede mostrar la vista sobre el personaje seleccionado junto con la lista de episodios en los que aparece
@@ -61,24 +61,68 @@ interface CharacterStorage {
     created: string;
 }
 
+interface EpsiodesProps {
+    id: number;
+    name: string;
+    air_date: string;
+    episode: string;
+    url: string;
+    created: string;
+    characters: string[];
+}
+
+interface Character {
+    id: number;
+    name: string;
+    image: string;
+    isFav: boolean;
+}
+
 const PaginaDetalle = () => {
 
     const dispatch = useAppDispatch()
     const images = useAppSelector(state => state.images)
     const charactersStorage : CharacterStorage[] = JSON.parse(localStorage.getItem("characters") || "[]");
-    const newId = useAppSelector((state) => state.images.idApi)
     const apiCharacter: CharacterApiResponse  = images.character;
+    const episodes: EpsiodesProps[] = images.episodes;
+    const [isFavorite, setIsFavorite] = useState(false)
 
+
+    console.log("estos son todos los episodios",episodes);
     useEffect(
         () => {
         dispatch(getData({
             page: images.GetDataArgs.page,
             name: images.GetDataArgs.name,
-            id: newId
+            id: images.GetDataArgs.id
         }))
+        
         },
-        [dispatch, images.GetDataArgs, newId]
+        [dispatch, images.GetDataArgs]
     )
+
+    const handleClickFav = () => {
+        dispatch(toggleFavorite(apiCharacter.id))
+        const newCharacter:Character = {
+            id: apiCharacter.id,
+            name: apiCharacter.name,
+            image: apiCharacter.image,
+            isFav: !isFavorite
+        };
+    
+        const charactersStorage = JSON.parse(localStorage.getItem("characters") || "[]");
+        const indexToDelete = charactersStorage.findIndex((character: {id: number}) => character.id === apiCharacter.id);
+
+        if (indexToDelete !== -1) {
+            charactersStorage.splice(indexToDelete, 1);
+            localStorage.setItem("characters", JSON.stringify(charactersStorage));
+        } else {
+            const updatedCharacters = [...charactersStorage, newCharacter];
+            localStorage.setItem("characters", JSON.stringify(updatedCharacters));
+        }
+        
+        setIsFavorite(!isFavorite)
+    }
 
     const charactersWithIsFav = useMemo(() => {
 
@@ -113,7 +157,7 @@ const PaginaDetalle = () => {
     //console.log("localStorage ",charactersStorage);
     //console.log("personaje de la api ",apiCharacter);
 
-    console.log("este personaje es favorito",charactersWithIsFav);
+    
     
 
     return <div className="container">
@@ -135,9 +179,12 @@ const PaginaDetalle = () => {
                     </div>
                     <h4>Lista de episodios donde apareció el personaje</h4>
                     <div className={"episodios-grilla"}>
-                        <TarjetaEpisodio />
-                        <TarjetaEpisodio />
-                        <TarjetaEpisodio />
+                        {
+                            episodes.map((episode) => {
+                                return <TarjetaEpisodio key={episode.id} name={episode.name} air_date={episode.air_date} episode={episode.episode}  />
+                            })
+                        }
+                        
                     </div>
             </>
             :
@@ -152,14 +199,16 @@ const PaginaDetalle = () => {
                                 <p>Planeta: {apiCharacter.location.name}</p>
                                 <p>Genero: {apiCharacter.gender}</p>
                             </div>
-                            <BotonFavorito esFavorito={false} />
+                            <BotonFavorito onClick={handleClickFav} esFavorito={false} />
                         </div>
                     </div>
                     <h4>Lista de episodios donde apareció el personaje</h4>
                     <div className={"episodios-grilla"}>
-                        <TarjetaEpisodio />
-                        <TarjetaEpisodio />
-                        <TarjetaEpisodio />
+                        {
+                            episodes.map((episode) => {
+                                return <TarjetaEpisodio key={episode.id} name={episode.name} air_date={episode.air_date} episode={episode.episode}  />
+                            })
+                        }
                     </div>
             </>
         }
